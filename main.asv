@@ -1,0 +1,71 @@
+function main(gameChoice)
+    % load points/stars
+    if isfile('points.txt')
+        stars = load('points.txt');
+    else stars = 0;
+    end
+
+    %generate random 5x5 matrix
+    matrixA = randi([1, 10], 5, 5);
+    disp(matrixA);
+
+    switch gameChoice
+        case 1
+            % Matrix a Rama: guess the number of elements in the 5x5 matrix
+            % that are less than or equal to 5
+            guess = input('Enter Guess: ');
+
+            answer = sum(matrixA(:) < 10);
+            earned_stars = max(0, 10 - abs(guess - answer));
+            fprintf('You earned: %d stars\n', earned_stars);
+
+        case 2
+            % Tellerama Summer: guess the sum of all the elements
+            guess = input('Enter Guess: ');
+            
+            sum_matrixA = sum(matrixA(:)); % sum of matrix
+            earned_stars = max(0, 50 - abs(guess - sum_matrixA));
+            fprintf('You earned: %d stars\n', earned_stars);
+
+        case 3
+            % Produce a Rama: guess the product of all elements
+            guess = input('Enter Guess: ');
+            prod_matrixA = prod(matrixA(:)); % product of matrix
+            earned_stars = max(0, 100 - abs(guess - prod_matrixA));
+            fprintf('You earned: %d stars\n', earned_stars);
+
+        case 4
+            % Fraction a Rama: guess the sum of the decimal parts
+            guess = input('Enter Guess: ');
+          
+            sqrt_matrixA = sqrt(matrixA);
+            decimal_part = sqrt_matrixA - floor(sqrt_matrixA); % extract only the decimal part
+            decimal_sum = sum(decimal_part, 'all');
+
+            earned_stars = max(0, 30 - abs(guess - decimal_sum));
+            fprintf('You earned: %d stars\n', earned_stars);
+
+
+
+        otherwise
+            disp('Invalid Choice!');
+            earned_stars = 0;
+
+    end
+    
+    % update stars
+    accumulated_stars = 0;
+    accumulated_stars = accumulated_stars + earned_stars;
+    save('points', 'accumulated_stars', '-ascii');
+ 
+    figure;
+        if isfile('points.txt')
+            history = load('points.txt'); % load all past accumulated stars
+        else history = [];
+        end
+
+        history = history[history; stars]; % append acummulated stars in this session
+        save('points.txt', 'history', '-ascii'); % overwrite with updated acummulated stars
+
+        plot('history', '-o');
+        xlabel('G')
